@@ -1,0 +1,9 @@
+## env files
+.env 
+.env.sample
+## node modules 
+node_modules
+## eslint files 
+.eslintrc.js
+## tests 
+test
