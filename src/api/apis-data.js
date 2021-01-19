@@ -19,12 +19,11 @@ const BASE_URL = 'https://jsonplaceholder.typicode.com/';
 
 let cachedData;
 let cacheTime;
-const apiKeys = new Map();
-apiKeys.set('1234', true);
+/* const apiKeys = new Map();
+apiKeys.set('1234', true); */
 
 
-router.get('/', limiter, speedLimiter, (req, res, next) => async (req, res, next) => {
-    {
+router.get('/', limiter, speedLimiter, (req, res, next) => {
         const apiKey = req.get('X-API-KEY');
         if (apiKeys.has(apiKey)) {
             next();
@@ -32,30 +31,34 @@ router.get('/', limiter, speedLimiter, (req, res, next) => async (req, res, next
             const error = new Error('Invalid API KEY');
             next(error);
         }
-    }
-    if (cacheTime && cacheTime > Date.now() - 30 * 1000) res.json(cachedData)
-    try {
-        const params = new URLSearchParams({
-
-            api_key: process.env.API_URL,
-            feedtype: 'json',
-            ver: '1.0'
-
-        });
+    },
+    async (req, res, next) => {
 
 
-        const {
-            data
-        } = await axios.get(`${BASE_URL}${process.env.API_URL}`);
-        cachedData = data;
-        cacheTime = Date.now();
-        data.cacheTime = cacheTime;
-        return res.json(data);
+
+        if (cacheTime && cacheTime > Date.now() - 30 * 1000) res.json(cachedData)
+        try {
+            const params = new URLSearchParams({
+
+                api_key: process.env.API_URL,
+                feedtype: 'json',
+                ver: '1.0'
+
+            });
 
 
-    } catch (error) {
-        return next(error);
-    }
-});
+            const {
+                data
+            } = await axios.get(`${BASE_URL}${process.env.API_URL}`);
+            cachedData = data;
+            cacheTime = Date.now();
+            data.cacheTime = cacheTime;
+            return res.json(data);
+
+
+        } catch (error) {
+            return next(error);
+        }
+    });
 
 module.exports = router;
