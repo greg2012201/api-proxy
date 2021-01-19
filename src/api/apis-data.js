@@ -19,7 +19,20 @@ const BASE_URL = 'https://jsonplaceholder.typicode.com/';
 
 let cachedData;
 let cacheTime;
-router.get('/', limiter, speedLimiter, async (req, res, next) => {
+const apiKeys = new Map();
+apiKeys.set('1234', true);
+
+
+router.get('/', limiter, speedLimiter, (req, res, next) => async (req, res, next) => {
+    {
+        const apiKey = req.get('X-API-KEY');
+        if (apiKeys.has(apiKey)) {
+            next();
+        } else {
+            const error = new Error('Invalid API KEY');
+            next(error);
+        }
+    }
     if (cacheTime && cacheTime > Date.now() - 30 * 1000) res.json(cachedData)
     try {
         const params = new URLSearchParams({
