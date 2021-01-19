@@ -19,8 +19,8 @@ const BASE_URL = 'https://jsonplaceholder.typicode.com/';
 
 let cachedData;
 let cacheTime;
-/* const apiKeys = new Map();
-apiKeys.set('1234', true); */
+const apiKeys = new Map();
+apiKeys.set('1234', true);
 
 
 router.get('/', limiter, speedLimiter, (req, res, next) => {
